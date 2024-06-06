@@ -7,8 +7,8 @@ TO_IMG_FOLDER: str = "val2017"
 
 
 def move_images(choose_object: list[dict]):
-    from_image_folder: str = os.path.abspath(f"./datasets_images/{FROM_IMG_FOLDER}")
-    to_image_folder: str = os.path.abspath(f"./datasets_images/{TO_IMG_FOLDER}")
+    from_image_folder: str = os.path.abspath(f"./COCO/{FROM_IMG_FOLDER}")
+    to_image_folder: str = os.path.abspath(f"./COCO/{TO_IMG_FOLDER}")
     for obj in choose_object:
         if os.path.exists(f"{from_image_folder}/{obj["file_name"]}"):
             os.replace(f"{from_image_folder}/{obj["file_name"]}", f"{to_image_folder}/{obj["file_name"]}")
@@ -56,7 +56,7 @@ def get_files(json_file: dict, indexes: list[int]) -> list[dict]:
     if not os.path.exists("./choose_files/"):
         os.makedirs("./choose_files/")
     for i in indexes:
-        with open(f"./choose_files/files-{date}", "a") as f:
+        with open(f"./choose_files/files-{date}.txt", "a") as f:
             f.write(f"{str(json_file["images"][i])}\n")
         img_data.append({"object_img": json_file["images"][i],
                          "file_name": json_file["images"][i]["file_name"], "object_bbox": json_file["annotations"][i]})
@@ -85,8 +85,8 @@ def load_json(file: str) -> dict:
 
 
 def main() -> None:
-    ff: str = f"from_file/{FROM_JSON_FILE}"
-    tf: str = f"to_file/{TO_JSON_FILE}"
+    ff: str = os.path.abspath(f"./COCO/annotations/{FROM_JSON_FILE}")
+    tf: str = os.path.abspath(f"./COCO/annotations/{TO_JSON_FILE}")
     train_json: dict = load_json(ff)
     indexes: list[int] = generate_rand_numbers(450, len(train_json["images"]))
     data_object: list[dict] = get_files(train_json, indexes)

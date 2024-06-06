@@ -1,5 +1,3 @@
 /**/*.venv
-/**/*datasets_images
-/**/*from_file
-/**/*to_file
+/**/*COCO
 /**/*choose_files
