@@ -32,7 +32,13 @@ def change_object(ff: str, tf: str, choose_object: list[dict], indexes: list[int
         to_file = json.load(tf)
         to_file_img_list: list[dict] = to_file["images"]
         to_file_ann_list: list[dict] = to_file["annotations"]
+        last_img_id: int = to_file_img_list[len(to_file_img_list) - 1]["id"]
+        last_ann_id: int = to_file_ann_list[len(to_file_ann_list) - 1]["id"]
         for obj in choose_object:
+            last_img_id += 1
+            last_ann_id += 1
+            obj["object_img"]["id"] = last_img_id
+            obj["object_bbox"]["id"] = last_ann_id
             to_file_img_list.append(obj["object_img"])
             to_file_ann_list.append(obj["object_bbox"])
             tf.seek(0)
@@ -59,12 +65,15 @@ def get_files(json_file: dict, indexes: list[int]) -> list[dict]:
 
 def generate_rand_numbers(qtd: int, size: int) -> list[int]:
     from random import randint
+    import json
+
     generated_nums: list[int] = list()
     final_nums: list[int] = list()
     while len(final_nums) < qtd:
         rand_num: int = randint(0, size-1)
         generated_nums.append(rand_num)
         final_nums.append(rand_num) if generated_nums.count(rand_num) == 1 else None
+    final_nums.sort(reverse=True)
     return final_nums
 
 
