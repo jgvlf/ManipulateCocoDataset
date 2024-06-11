@@ -108,7 +108,7 @@ def main() -> None:
     ff: str = os.path.abspath(f"./COCO/annotations/{FROM_JSON_FILE}")
     tf: str = os.path.abspath(f"./COCO/annotations/{TO_JSON_FILE}")
     train_json: dict = load_json(ff)
-    indexes: list[int] = generate_rand_numbers(450, len(train_json["images"]))
+    indexes: list[int] = generate_rand_numbers(540, len(train_json["images"]))
     data_object: list[dict] = get_files(train_json, indexes)
     change_object(ff, tf, get_files(train_json, indexes), indexes)
     move_images(data_object)
