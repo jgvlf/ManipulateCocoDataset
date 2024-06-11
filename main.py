@@ -21,19 +21,39 @@ def change_object(ff: str, tf: str, choose_object: list[dict], indexes: list[int
         from_file = json.load(ff)
         from_img_list: list[dict] = from_file["images"]
         from_ann_list: list[dict] = from_file["annotations"]
+        rewrite_index_img: int = 0
+        rewrite_index_ann: int = 0
         for i in indexes:
             del from_img_list[i]
             del from_ann_list[i]
             ff.seek(0)
+        for file_img in from_img_list:
+            file_img["id"] = rewrite_index_img
+            rewrite_index_img += 1
+            ff.seek(0)
+        for file_ann in from_ann_list:
+            file_ann["id"] = rewrite_index_ann
+            rewrite_index_ann += 1
+            ff.seek(0)
         json.dump(from_file, ff, indent=3)
         ff.truncate()
         ff.close()
+    rewrite_index_img = 0
+    rewrite_index_ann = 0
     with open(tf, 'r+') as tf:
         to_file = json.load(tf)
         to_file_img_list: list[dict] = to_file["images"]
         to_file_ann_list: list[dict] = to_file["annotations"]
         last_img_id: int = to_file_img_list[len(to_file_img_list) - 1]["id"]
         last_ann_id: int = to_file_ann_list[len(to_file_ann_list) - 1]["id"]
+        for file_img in to_file_img_list:
+            file_img["id"] = rewrite_index_img
+            rewrite_index_img += 1
+            tf.seek(0)
+        for file_ann in to_file_ann_list:
+            file_ann["id"] = rewrite_index_ann
+            rewrite_index_ann += 1
+            tf.seek(0)
         for obj in choose_object:
             last_img_id += 1
             last_ann_id += 1
