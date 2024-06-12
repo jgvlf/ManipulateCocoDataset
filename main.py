@@ -123,7 +123,7 @@ def main() -> None:
     train_json: dict = load_json(ff)
     indexes: list[int] = generate_rand_numbers(540, len(train_json["images"]))
     data_object: list[dict] = get_files(train_json, indexes)
-    change_object(ff, tf, get_files(train_json, indexes), indexes)
+    change_object(ff, tf, data_object, indexes)
     move_images(data_object)
 
 
