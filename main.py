@@ -73,8 +73,21 @@ def get_files(json_file: dict, indexes: list[int]) -> list[dict]:
     now: datetime = datetime.datetime.now()
     date = now.strftime("(%d-%m-%Y)_(%H-%M-%S)")
     img_data: list[dict] = list()
+    img_id: list[int] = list()
+    new_ids: list[int] = list()
     if not os.path.exists("./choose_files/"):
         os.makedirs("./choose_files/")
+    for img_list_id in json_file["annotations"]:
+        img_id.append(img_list_id["image_id"])
+    for i in indexes:
+        if img_id.count(i) > 1:
+            for ff in json_file["annotations"]:
+                if ff["image_id"] == i:
+                    new_ids.append(ff["id"])
+        break
+    for ids in new_ids:
+        indexes.append(ids)
+        indexes.sort(reverse=True)
     for i in indexes:
         with open(f"./choose_files/files-{date}.txt", "a") as f:
             f.write(f"{str(json_file["images"][i])}\n")
