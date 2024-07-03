@@ -1,9 +1,9 @@
 import os.path
 
-FROM_JSON_FILE: str = "instances_train2017.json"
-TO_JSON_FILE: str = "instances_val2017.json"
-FROM_IMG_FOLDER: str = "train2017"
-TO_IMG_FOLDER: str = "val2017"
+FROM_JSON_FILE: str = "instances_train2018.json"
+TO_JSON_FILE: str = "instances_val2018.json"
+FROM_IMG_FOLDER: str = "train2018"
+TO_IMG_FOLDER: str = "val2018"
 
 
 def move_images(choose_object: list[dict]):
@@ -35,17 +35,20 @@ def change_object(ff: str, tf: str, choose_object: list[dict], indexes: list[int
             file_ann["id"] = rewrite_index_ann
             rewrite_index_ann += 1
             ff.seek(0)
-        json.dump(from_file, ff, indent=3)
+        json.dump(from_file, ff, indent=None)
         ff.truncate()
         ff.close()
     rewrite_index_img = 0
     rewrite_index_ann = 0
     with open(tf, 'r+') as tf:
+        last_img_id: int = 0
+        last_ann_id: int = 0
         to_file = json.load(tf)
         to_file_img_list: list[dict] = to_file["images"]
         to_file_ann_list: list[dict] = to_file["annotations"]
-        last_img_id: int = to_file_img_list[len(to_file_img_list) - 1]["id"]
-        last_ann_id: int = to_file_ann_list[len(to_file_ann_list) - 1]["id"]
+        if len(to_file_img_list) != 0 and len(to_file_ann_list) != 0:
+            last_img_id = to_file_img_list[len(to_file_img_list) - 1]["id"]
+            last_ann_id = to_file_ann_list[len(to_file_ann_list) - 1]["id"]
         for file_img in to_file_img_list:
             file_img["id"] = rewrite_index_img
             rewrite_index_img += 1
@@ -62,7 +65,7 @@ def change_object(ff: str, tf: str, choose_object: list[dict], indexes: list[int
             to_file_img_list.append(obj["object_img"])
             to_file_ann_list.append(obj["object_bbox"])
             tf.seek(0)
-        json.dump(to_file, tf, indent=3)
+        json.dump(to_file, tf, indent=None)
         tf.truncate()
 
 
@@ -121,7 +124,8 @@ def main() -> None:
     ff: str = os.path.abspath(f"./COCO/annotations/{FROM_JSON_FILE}")
     tf: str = os.path.abspath(f"./COCO/annotations/{TO_JSON_FILE}")
     train_json: dict = load_json(ff)
-    indexes: list[int] = generate_rand_numbers(540, len(train_json["images"]))
+    # 490 for test folder and 540 for val folder
+    indexes: list[int] = generate_rand_numbers(5, len(train_json["images"]))
     data_object: list[dict] = get_files(train_json, indexes)
     change_object(ff, tf, data_object, indexes)
     move_images(data_object)
